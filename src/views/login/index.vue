@@ -41,6 +41,25 @@
         </span>
       </el-form-item>
 
+      <el-form-item prop="userCode">
+
+          <span class="svg-container">
+          <svg-icon icon-class="user" />
+        </span>
+          <el-input
+            ref="userCode"
+            v-model="loginForm.userCode"
+            placeholder="userCode"
+            name="userCode"
+            type="text"
+            tabindex="1"
+            auto-complete="on"
+          />
+        <span style="display: inline-block;width: 130px;height: 53px;border: 1px solid #D7D7D7;" @click="changeImgCode">
+    <img :src="imgCode" style="width: 100%;height: 100%;cursor: pointer;"/>
+      </span>
+      </el-form-item>
+
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
 
       <div class="tips">
@@ -83,7 +102,8 @@ export default {
       },
       loading: false,
       passwordType: 'password',
-      redirect: undefined
+      redirect: undefined,
+      imgCode: 'url'
     }
   },
   watch: {
