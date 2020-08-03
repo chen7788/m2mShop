@@ -10,9 +10,8 @@ export function login(data) {
 
 export function getInfo(token) {
   return request({
-    url: '/vue-admin-template/user/info',
+    url: '/auth/user/info',
     method: 'get',
-    params: { token }
   })
 }
 
@@ -20,5 +19,11 @@ export function logout() {
   return request({
     url: '/vue-admin-template/user/logout',
     method: 'post'
+  })
+}
+export function captchaImage() {
+  return request({
+    url: 'auth/captchaImage',
+    method: 'get'
   })
 }

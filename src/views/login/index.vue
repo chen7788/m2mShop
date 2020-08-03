@@ -41,25 +41,24 @@
         </span>
       </el-form-item>
 
-      <el-form-item prop="userCode">
+      <el-form-item prop="userCode" >
 
           <span class="svg-container">
           <svg-icon icon-class="user" />
         </span>
-          <el-input
+          <el-input style="width: 50%;height: 47px"
             ref="userCode"
             v-model="loginForm.userCode"
             placeholder="userCode"
             name="userCode"
             type="text"
-            tabindex="1"
+            tabindex="3"
             auto-complete="on"
           />
-        <span style="display: inline-block;width: 130px;height: 53px;border: 1px solid #D7D7D7;" @click="changeImgCode">
-    <img :src="imgCode" style="width: 100%;height: 100%;cursor: pointer;"/>
-      </span>
+        <span class="login-code">
+            <img :src="imgCode" @click="getCaptchaImage"/>
+          </span>
       </el-form-item>
-
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
 
       <div class="tips">
@@ -73,6 +72,7 @@
 
 <script>
 import { validUsername } from '@/utils/validate'
+import { captchaImage } from '@/api/user'
 
 export default {
   name: 'Login',
@@ -91,19 +91,29 @@ export default {
         callback()
       }
     }
+    const validateCode = (rule, value, callback) => {
+      if (value.length <= 0) {
+        callback(new Error('The password can not be less than 6 digits'))
+      } else {
+        callback()
+      }
+    }
     return {
       loginForm: {
-        username: 'admin',
-        password: '111111'
+        username: '',
+        password: '',
+        userCode:''
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+        password: [{ required: true, trigger: 'blur', validator: validatePassword }],
+        userCode: [{ required: true, trigger: 'blur', validator: validateCode }]
       },
       loading: false,
       passwordType: 'password',
       redirect: undefined,
-      imgCode: 'url'
+      imgCode: '',
+      uuid:''
     }
   },
   watch: {
@@ -113,6 +123,9 @@ export default {
       },
       immediate: true
     }
+  },
+  created(){
+    this.getCaptchaImage();
   },
   methods: {
     showPwd() {
@@ -125,11 +138,25 @@ export default {
         this.$refs.password.focus()
       })
     },
+    getCaptchaImage() {
+      captchaImage().then(response => {
+        const { data } = response
+        const s1 = data.img.substring(0, data.img.length - 2);
+        this.imgCode = 'data:image/png;base64,'+s1
+        this.uuid = data.uuid
+      })
+    },
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$store.dispatch('user/login', this.loginForm).then(() => {
+          const param = {
+            username: this.loginForm.username,
+            password: this.loginForm.password,
+            code: this.loginForm.userCode,
+            uuid: this.uuid
+          };
+          this.$store.dispatch('user/login', param).then(() => {
             this.$router.push({ path: this.redirect || '/' })
             this.loading = false
           }).catch(() => {
@@ -146,50 +173,49 @@ export default {
 </script>
 
 <style lang="scss">
-/* 修复input 背景不协调 和光标变色 */
-/* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
+  /* 修复input 背景不协调 和光标变色 */
+  /* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
 
-$bg:#283443;
-$light_gray:#fff;
-$cursor: #fff;
+  $bg:#283443;
+  $light_gray:#fff;
+  $cursor: #fff;
 
-@supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
-  .login-container .el-input input {
-    color: $cursor;
-  }
-}
-
-/* reset element-ui css */
-.login-container {
-  .el-input {
-    display: inline-block;
-    height: 47px;
-    width: 85%;
-
-    input {
-      background: transparent;
-      border: 0px;
-      -webkit-appearance: none;
-      border-radius: 0px;
-      padding: 12px 5px 12px 15px;
-      color: $light_gray;
-      height: 47px;
-      caret-color: $cursor;
-
-      &:-webkit-autofill {
-        box-shadow: 0 0 0px 1000px $bg inset !important;
-        -webkit-text-fill-color: $cursor !important;
-      }
+  @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
+    .login-container .el-input input {
+      color: $cursor;
     }
   }
+  /* reset element-ui css */
+  .login-container {
 
-  .el-form-item {
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(0, 0, 0, 0.1);
-    border-radius: 5px;
-    color: #454545;
+    .el-input {
+      display: inline-block;
+      height: 47px;
+      width: 85%;
+      background-color: white;
+      input {
+        background: transparent;
+        border: 0px;
+        -webkit-appearance: none;
+        border-radius: 0px;
+        padding: 11px 5px 12px 15px;
+        color: black;
+        height: 47px;
+        caret-color: $cursor;
+
+        &:-webkit-autofill {
+          box-shadow: 0 0 0px 1000px $bg inset !important;
+          -webkit-text-fill-color: $cursor !important;
+        }
+      }
+    }
+    .el-form-item {
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      //background: rgba(0, 0, 0, 0.1);
+      border-radius: 5px;
+      //color: #454545;
+    }
   }
-}
 </style>
 
 <style lang="scss" scoped>
@@ -200,16 +226,26 @@ $light_gray:#eee;
 .login-container {
   min-height: 100%;
   width: 100%;
-  background-color: $bg;
   overflow: hidden;
-
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  display: flex;
+  background-image: url("../../assets/images/login-background.jpg");
+  background-size: cover;
+}
   .login-form {
-    position: relative;
-    width: 520px;
-    max-width: 100%;
-    padding: 160px 35px 0;
-    margin: 0 auto;
-    overflow: hidden;
+    border-radius: 6px;
+    background: #fff;
+    width: 400px;
+    padding: 25px 25px 5px
+  }
+  .background{
+    z-index: -1;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: block;
   }
 
   .tips {
@@ -223,7 +259,11 @@ $light_gray:#eee;
       }
     }
   }
-
+.login-form .input-icon {
+  height: 39px;
+  width: 14px;
+  margin-left: 2px
+}
   .svg-container {
     padding: 6px 5px 6px 15px;
     color: $dark_gray;
@@ -236,11 +276,9 @@ $light_gray:#eee;
     position: relative;
 
     .title {
-      font-size: 26px;
-      color: $light_gray;
-      margin: 0px auto 40px auto;
+      margin: 0 auto 30px;
       text-align: center;
-      font-weight: bold;
+      color: #707070
     }
   }
 
@@ -253,5 +291,19 @@ $light_gray:#eee;
     cursor: pointer;
     user-select: none;
   }
+.login-code {
+  width: 33%;
+  height: 38px;
+  float: right;
+  top: 7px;
+  right: 10px;
+  position: relative;
+  .img{
+    cursor: pointer;
+    vertical-align: middle;
+    width: 111px;
+    height: 38px;
+  }
 }
+
 </style>
