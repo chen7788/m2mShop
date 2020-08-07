@@ -30,7 +30,7 @@ import Layout from '@/layout'
  * a base page that does not have permission requirements
  * all roles can be accessed
  */
-export const constantRoutes = [
+export const constantRouterMap = [
   {
     path: '/redirect',
     component: Layout,
@@ -74,7 +74,10 @@ export const constantRoutes = [
         meta: { title: 'dashboard', icon: 'dashboard', noCache: true }
       }
     ]
-  },
+  }
+]
+
+export const asyncRouterMap = [
   {
     path: '/user',
     component: Layout,
@@ -95,15 +98,74 @@ export const constantRoutes = [
           title: '会员管理',
           noCache: true
         }
+      },{
+        path: 'commission',
+        component: () => import('@/views/user/commission'),
+        name: 'commission',
+        meta: {
+          perms: ['GET /admin/commission/list'],
+          title: '佣金管理',
+          noCache: true
+        }
+      },
+      {
+        path: 'address',
+        component: () => import('@/views/user/address'),
+        name: 'address',
+        meta: {
+          perms: ['GET /admin/address/list'],
+          title: '收货地址',
+          noCache: true
+        }
+      },
+      {
+        path: 'collect',
+        component: () => import('@/views/user/collect'),
+        name: 'collect',
+        meta: {
+          perms: ['GET /admin/collect/list'],
+          title: '会员收藏',
+          noCache: true
+        }
+      },
+      {
+        path: 'footprint',
+        component: () => import('@/views/user/footprint'),
+        name: 'footprint',
+        meta: {
+          perms: ['GET /admin/footprint/list'],
+          title: '会员足迹',
+          noCache: true
+        }
+      },
+      {
+        path: 'history',
+        component: () => import('@/views/user/history'),
+        name: 'history',
+        meta: {
+          perms: ['GET /admin/history/list'],
+          title: '搜索历史',
+          noCache: true
+        }
+      },
+      {
+        path: 'feedback',
+        component: () => import('@/views/user/feedback'),
+        name: 'feedback',
+        meta: {
+          perms: ['GET /admin/feedback/list'],
+          title: '意见反馈',
+          noCache: true
+        }
       }
     ]
-  }
+  },
 ]
 
 const createRouter = () => new Router({
   // mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
-  routes: constantRoutes
+  routes: constantRouterMap
 })
 
 const router = createRouter()

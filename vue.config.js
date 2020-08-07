@@ -38,12 +38,12 @@ module.exports = {
     },
     proxy:{
       '/dev-api':{
-        target:'https://www.shequlianshang.com',
+        target:'http://localhost:8083',
         ws:true,
         secure: true,
         changeOrigin: true,
         pathRewrite:{
-          '/dev-api':'/demo-admin'
+          '/dev-api':'/demo/admin'
         }
       }
     }

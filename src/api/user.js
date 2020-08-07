@@ -1,29 +1,65 @@
 import request from '@/utils/request'
 
-export function login(data) {
+export function fetchList(query) {
   return request({
-    url: '/auth/login',
+    url: '/user/list',
+    method: 'get',
+    params: query
+  })
+}
+
+export function approveAgency(data) {
+  return request({
+    url: '/user/approveAgency',
     method: 'post',
     data
   })
 }
 
-export function getInfo(token) {
+export function detailApprove(id) {
   return request({
-    url: '/auth/user/info',
+    url: '/user/detailApprove',
     method: 'get',
+    params: { id }
   })
 }
 
-export function logout() {
+export function listAddress(query) {
   return request({
-    url: '/vue-admin-template/user/logout',
-    method: 'post'
+    url: '/address/list',
+    method: 'get',
+    params: query
   })
 }
-export function captchaImage() {
+
+export function listCollect(query) {
   return request({
-    url: 'auth/captchaImage',
-    method: 'get'
+    url: '/collect/list',
+    method: 'get',
+    params: query
+  })
+}
+
+export function listFeedback(query) {
+  return request({
+    url: '/feedback/list',
+    method: 'get',
+    params: query
+  })
+}
+
+export function listFootprint(query) {
+  return request({
+    url: '/footprint/list',
+    method: 'get',
+    params: query
+  })
+}
+
+export function listHistory(query) {
+  return request({
+    url: '/history/list',
+    method: 'get',
+    params: query
   })
 }

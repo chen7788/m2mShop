@@ -17,6 +17,7 @@ import '@/permission'
 import i18n from './lang' // Internationalization
 import Cookies from 'js-cookie'
 import * as filters from './filters' // global filters
+import permission from "@/permission/permission";
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api
@@ -40,6 +41,7 @@ Vue.use(ElementUI, {
   size: Cookies.get('size') || 'medium', // set element-ui default size
   i18n: (key, value) => i18n.t(key, value)
 })
+Vue.directive('permission',permission)
 // 如果想要中文版 element-ui，按如下方式声明
 // Vue.use(ElementUI)
 

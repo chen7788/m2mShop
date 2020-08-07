@@ -72,7 +72,7 @@
 
 <script>
 import { validUsername } from '@/utils/validate'
-import { captchaImage } from '@/api/user'
+import { captchaImage } from '@/api/login'
 
 export default {
   name: 'Login',
@@ -107,7 +107,7 @@ export default {
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }],
-        userCode: [{ required: true, trigger: 'blur', validator: validateCode }]
+        //userCode: [{ required: true, trigger: 'blur', validator: validateCode }]
       },
       loading: false,
       passwordType: 'password',
@@ -140,6 +140,7 @@ export default {
     },
     getCaptchaImage() {
       captchaImage().then(response => {
+        debugger
         const { data } = response
         const s1 = data.img.substring(0, data.img.length - 2);
         this.imgCode = 'data:image/png;base64,'+s1

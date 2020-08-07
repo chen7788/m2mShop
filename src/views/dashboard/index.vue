@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-container">
-    <el-row gutter=40>
-      <el-col v-for=" i in list" :xs="12" :sm="12" :lg="6" >
+    <el-row :gutter="40">
+      <el-col v-for=" i in list" :key="list[i]" :xs="12" :sm="12" :lg="6" >
         <div class="card-container">
           <div class="card-icon">
             <svg-icon icon-class="peoples" class-name="card-panel-icon"/>
@@ -16,7 +16,7 @@
       <div class="lineChart-container">
         <line-chart :chart-data="lineChartData"/>
       </div>
-    <el-row gutter="40">
+    <el-row :gutter="40">
       <el-col :xs="24" :sm="24" :lg="16">
         <div class="barChart-container">
           <bar-line-chart :chart-data="barLineChartData"/>
